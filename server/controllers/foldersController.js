@@ -1,7 +1,8 @@
 const {
   createFolder,
   getFolders,
-  deleteFolder
+  deleteFolder,
+  updateFolder
 } = require('../services/foldersService');
 
 exports.getFolders = async (req, res) => {
@@ -9,8 +10,9 @@ exports.getFolders = async (req, res) => {
     const folders = await getFolders();
 
     if (!folders) {
-      res.json({
-        success: false
+      return res.status(400).json({
+        success: false,
+        message: 'Could not get folders'
       });
     }
 
@@ -19,7 +21,7 @@ exports.getFolders = async (req, res) => {
       folders
     });
   } catch (err) {
-    res.json({ success: false, err });
+    res.status(500).json({ success: false, err });
   }
 };
 
@@ -29,8 +31,9 @@ exports.createFolder = async (req, res) => {
     const folder = await createFolder(folder_name);
 
     if (!folder) {
-      res.json({
-        success: false
+      return res.status(400).json({
+        success: false,
+        messasge: 'Could not create folder'
       });
     }
 
@@ -39,7 +42,29 @@ exports.createFolder = async (req, res) => {
       folder
     });
   } catch (err) {
-    res.json({ success: false, err });
+    res.status(500).json({ success: false, err });
+  }
+};
+
+exports.updateFolder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { folder_name } = req.body;
+    const folder = await updateFolder(id, folder_name);
+
+    if (!folder) {
+      return res.status(400).json({
+        success: false,
+        message: 'Could not delete folder'
+      });
+    }
+
+    res.json({
+      success: true,
+      folder
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, err });
   }
 };
 
@@ -49,8 +74,9 @@ exports.deleteFolder = async (req, res) => {
     const deletedFolder = await deleteFolder(id);
 
     if (!deletedFolder) {
-      res.json({
-        success: false
+      return res.status(400).json({
+        success: false,
+        message: 'Could not delete folder'
       });
     }
 
@@ -59,6 +85,6 @@ exports.deleteFolder = async (req, res) => {
       deletedFolder
     });
   } catch (err) {
-    res.json({ success: false, err });
+    res.status(500).json({ success: false, err });
   }
 };

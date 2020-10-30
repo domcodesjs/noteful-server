@@ -1,7 +1,8 @@
 const {
   createNote,
   getNotes,
-  deleteNote
+  deleteNote,
+  updateNote
 } = require('../services/notesService');
 
 exports.getNotes = async (req, res) => {
@@ -9,8 +10,9 @@ exports.getNotes = async (req, res) => {
     const notes = await getNotes();
 
     if (!notes) {
-      res.json({
-        success: false
+      return res.status(400).json({
+        success: false,
+        message: 'Could not get notes'
       });
     }
 
@@ -19,17 +21,17 @@ exports.getNotes = async (req, res) => {
       notes
     });
   } catch (err) {
-    res.json({ success: false, err });
+    res.status(500).json({ success: false, err });
   }
 };
 
 exports.createNote = async (req, res) => {
   try {
     const note = await createNote({ ...req.body, modified: new Date() });
-
     if (!note) {
-      res.json({
-        success: false
+      return res.status(400).json({
+        success: false,
+        message: 'Could not create note'
       });
     }
 
@@ -38,7 +40,34 @@ exports.createNote = async (req, res) => {
       note
     });
   } catch (err) {
-    res.json({ success: false, err });
+    res.status(500).json({ success: false, err });
+  }
+};
+
+exports.updateNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { note_name, note_content } = req.body;
+    console.log(req.body);
+    const note = await updateNote(id, {
+      note_name,
+      note_content,
+      modified: new Date()
+    });
+
+    if (!note) {
+      return res.status(400).json({
+        success: false,
+        message: 'Could not update note'
+      });
+    }
+
+    res.json({
+      success: true,
+      updatedNote: note
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, err });
   }
 };
 
@@ -48,8 +77,9 @@ exports.deleteNote = async (req, res) => {
     const deletedNote = await deleteNote(id);
 
     if (!deletedNote) {
-      res.json({
-        success: false
+      return res.status(400).json({
+        success: false,
+        message: 'Could not delete note'
       });
     }
 
@@ -58,6 +88,6 @@ exports.deleteNote = async (req, res) => {
       deletedNote
     });
   } catch (err) {
-    res.json({ success: false, err });
+    res.status(500).json({ success: false, err });
   }
 };

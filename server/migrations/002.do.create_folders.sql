@@ -5,5 +5,5 @@ CREATE TABLE folders (
 
 ALTER TABLE notes
   ADD COLUMN
-    folder INTEGER REFERENCES folders(id)
-    ON DELETE SET NULL;
+    folder INTEGER REFERENCES folders(id) 
+    ON DELETE CASCADE NOT NULL;
